@@ -16,9 +16,9 @@ JavaScript layer only forwards calls and events.
 The package is not on npm yet. Install it from GitHub:
 
 ```sh
-npm install github:adfacten/adfacten-react-native-ads#v1.0.0
+npm install github:adfacten/adfacten-react-native-ads#1.0.0
 # or
-yarn add @adfacten/react-native-ads@github:adfacten/adfacten-react-native-ads#v1.0.0
+yarn add @adfacten/react-native-ads@github:adfacten/adfacten-react-native-ads#1.0.0
 ```
 
 iOS:
