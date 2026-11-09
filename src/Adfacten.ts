@@ -1,4 +1,5 @@
 import { nativeModule } from './native';
+import { VERSION } from './version';
 
 export type LogLevel = 'none' | 'error' | 'warning' | 'info' | 'debug';
 
@@ -50,7 +51,8 @@ function initialize(appKey: string, config: AdfactenConfig = {}): void {
     logLevel?: string;
     childDirected?: boolean;
     userId?: string;
-  } = {};
+    pluginVersion?: string;
+  } = { pluginVersion: VERSION };
   if (config.testMode !== undefined) nativeConfig.testMode = !!config.testMode;
   if (config.logLevel !== undefined) nativeConfig.logLevel = config.logLevel;
   if (config.childDirected !== undefined)
@@ -70,12 +72,14 @@ function isInitialized(): boolean {
   return initialized;
 }
 
-/** Version of the native Adfacten SDK in this build, e.g. "1.0.0". */
+/** Version of the native Adfacten SDK in this build, e.g. "1.0.2". */
 function getSdkVersion(): Promise<string> {
   return nativeModule().getSdkVersion();
 }
 
 export const Adfacten = {
+  /** Version of this package. The native SDKs report it with each ad request. */
+  version: VERSION,
   initialize,
   setUserId,
   isInitialized,

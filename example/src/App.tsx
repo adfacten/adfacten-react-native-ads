@@ -34,7 +34,7 @@ type LogLine = { id: number; text: string };
 
 function describe(e: unknown): string {
   if (isAdfactenError(e)) {
-    return `${e.code}${e.serverCode ? ` (${e.serverCode})` : ''}: ${e.message}`;
+    return `${e.errorName}${e.serverCode ? ` (${e.serverCode})` : ''}: ${e.message}`;
   }
   return String(e);
 }

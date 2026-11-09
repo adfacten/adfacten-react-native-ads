@@ -10,15 +10,16 @@ JavaScript layer only forwards calls and events.
 - React Native 0.80 or newer with the New Architecture (the default since 0.76, the only option since 0.82)
 - iOS 15.1+, Android 7.0+ (minSdk 24)
 - Expo: development builds and `expo prebuild` (not Expo Go)
+- Built on the native Adfacten SDK 1.0.2 for Android and iOS
 
 ## Installation
 
 The package is not on npm yet. Install it from GitHub:
 
 ```sh
-npm install github:adfacten/adfacten-react-native-ads#1.0.0
+npm install github:adfacten/adfacten-react-native-ads#1.0.1
 # or
-yarn add @adfacten/react-native-ads@github:adfacten/adfacten-react-native-ads#1.0.0
+yarn add @adfacten/react-native-ads@github:adfacten/adfacten-react-native-ads#1.0.1
 ```
 
 iOS:
@@ -79,7 +80,7 @@ import { AdfactenBanner } from '@adfacten/react-native-ads';
   placementId="plc_your_banner"
   size="banner"
   onLoad={() => {}}
-  onError={(e) => console.log(e.code, e.message)}
+  onError={(e) => console.log(e.errorName, e.message)}
   onImpression={() => {}}
   onClick={() => {}}
 />
@@ -95,8 +96,13 @@ import { AdfactenBanner } from '@adfacten/react-native-ads';
 The component has the size of the creative; use `style` for margins and alignment. The ad loads when
 the view mounts and is released when it unmounts. Impressions count only while the banner is really
 on screen, and it refreshes on its own at the interval set on the placement (30-120 s of on-screen
-time). Set `autoRefresh={false}` to turn refresh off (on iOS an interval set on the placement still
-applies). Changing `placementId` or `size` loads a new ad.
+time). Set `autoRefresh={false}` to turn refresh off, even if the placement has an interval.
+Changing `placementId` or `size` loads a new ad.
+
+If a load fails (no fill, network or server error), the banner tries again on the same timer while
+it is on screen, never sooner than the SDK's back-off for that placement. A rejected request (app or
+placement not approved, COPPA) stops it. Keep the banner mounted if you want an empty slot to fill
+later; unmounting it in `onError` stops the retries.
 
 ## Interstitial
 
@@ -238,7 +244,10 @@ text assets for logging.
 
 ## Errors
 
-Every failure is an `AdfactenError` (`instanceof Error`), with the same codes on both platforms:
+Every failure is an `AdfactenError` (`instanceof Error`), with the same codes on both platforms.
+`errorName` is the stable error name reported by the native SDK (`no_fill`, `network_error`, ...),
+the same on Android and iOS; `code` is that name in upper case, except that `already_shown` and
+`not_ready` are both `NOT_READY`.
 
 ```ts
 import { isAdfactenError } from '@adfacten/react-native-ads';
@@ -252,20 +261,21 @@ try {
 }
 ```
 
-| `code` | Meaning |
-|---|---|
-| `NO_FILL` | No ad right now. The SDK waits at least 30 s before asking again for that placement. |
-| `NETWORK_ERROR` | Offline or timeout. |
-| `REJECTED` | The ad server refused the request; see `serverCode`. |
-| `NOT_INITIALIZED` | `Adfacten.initialize` was not called, or the app key is malformed. |
-| `INVALID_REQUEST` | For example an empty placement id. |
-| `AD_EXPIRED` | Loaded about 55 minutes ago or more. Load a new one. |
-| `NOT_READY` | Already shown, destroyed, or not loaded. |
-| `SHOW_FAILED` | No foreground activity / view controller, or another ad is on screen. |
-| `VIDEO_NOT_SUPPORTED` | A video ad was served but Android video support is turned off. |
-| `CREATIVE_FAILED` | The creative failed to render (iOS). |
-| `CHILD_DIRECTED` | The app is child-directed; ads are not served (iOS). |
-| `LOAD_IN_PROGRESS`, `SERVER_ERROR`, `INVALID_RESPONSE`, `INTERNAL_ERROR` | Other failures. |
+| `code` | `errorName` | Meaning |
+|---|---|---|
+| `NO_FILL` | `no_fill` | No ad right now. The SDK waits at least 30 s before asking again for that placement. |
+| `NETWORK_ERROR` | `network_error` | Offline or timeout. |
+| `SERVER_ERROR` | `server_error` | The ad server had an error (5xx). |
+| `REJECTED` | `rejected` | The ad server refused the request; see `serverCode`. |
+| `NOT_INITIALIZED` | `not_initialized` | `Adfacten.initialize` was not called, or the app key is malformed. |
+| `INVALID_REQUEST` | `invalid_request` | For example an empty placement id. |
+| `AD_EXPIRED` | `ad_expired` | Loaded about 55 minutes ago or more. Load a new one. |
+| `NOT_READY` | `already_shown`, `not_ready` | Already shown, destroyed, or not loaded. |
+| `SHOW_FAILED` | `show_failed` | No foreground activity / view controller, or another ad is on screen. |
+| `VIDEO_NOT_SUPPORTED` | `video_not_supported` | A video ad was served but Android video support is turned off. |
+| `CREATIVE_FAILED` | `creative_failed` | The creative failed to render (iOS). |
+| `CHILD_DIRECTED` | `child_directed` | The app is child-directed; ads are not served (iOS). |
+| `LOAD_IN_PROGRESS`, `INVALID_RESPONSE`, `INTERNAL_ERROR` | `load_in_progress`, `invalid_response`, `internal_error` | Other failures. |
 
 `serverCode` for `REJECTED`: `unknown_app` (wrong app key), `app_not_approved`, `bundle_mismatch`
 (the bundle id / applicationId is not the one registered for the app), `platform_mismatch` (the
@@ -356,7 +366,7 @@ By default the pod vendors the XCFramework downloaded from the Adfacten CDN duri
   Podfile, since it is not on CocoaPods trunk:
 
   ```ruby
-  pod 'AdfactenAds', :git => 'https://github.com/adfacten/adfacten-ios-sdk.git', :tag => '1.0.0'
+  pod 'AdfactenAds', :git => 'https://github.com/adfacten/adfacten-ios-sdk.git', :tag => '1.0.2'
   ```
 
 - `ADFACTEN_IOS_FRAMEWORK=/path/to/AdfactenAds.xcframework`: use a copy you downloaded yourself,

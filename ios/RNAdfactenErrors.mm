@@ -5,21 +5,10 @@
 + (NSString *)codeForError:(NSError *)error
 {
   if (![error.domain isEqualToString:@"com.adfacten.ads"]) {
-    return @"INTERNAL_ERROR";
+    return @"internal_error";
   }
-  switch ((ADFErrorCode)error.code) {
-    case ADFErrorCodeNotInitialized: return @"NOT_INITIALIZED";
-    case ADFErrorCodeNoFill: return @"NO_FILL";
-    case ADFErrorCodeNetwork: return @"NETWORK_ERROR";
-    case ADFErrorCodeServerRejected: return @"REJECTED";
-    case ADFErrorCodeInvalidResponse: return @"INVALID_RESPONSE";
-    case ADFErrorCodeExpired: return @"AD_EXPIRED";
-    case ADFErrorCodeNotReady: return @"NOT_READY";
-    case ADFErrorCodePresentationFailed: return @"SHOW_FAILED";
-    case ADFErrorCodeCreativeFailed: return @"CREATIVE_FAILED";
-    case ADFErrorCodeChildDirected: return @"CHILD_DIRECTED";
-  }
-  return @"INTERNAL_ERROR";
+  id name = error.userInfo[ADFAdfacten.errorNameKey];
+  return [name isKindOfClass:[NSString class]] && [name length] > 0 ? name : @"internal_error";
 }
 
 + (nullable NSString *)serverCodeForError:(NSError *)error

@@ -61,7 +61,7 @@ class RNAdfactenNativeAdView(context: Context) : FrameLayout(context) {
       return
     }
     val current = ad ?: return
-    // Rebinding would start a new impression, so only a template switch rebuilds the view;
+    // Only a template switch rebuilds the view (a rebind never counts a second impression);
     // colors and sizes are applied in place.
     if (template != builtTemplate) bind(current) else parts?.let { applyStyle(it); remeasure() }
   }

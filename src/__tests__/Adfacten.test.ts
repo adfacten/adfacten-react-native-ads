@@ -25,6 +25,7 @@ describe('Adfacten', () => {
     expect(mockNative!.initialize).toHaveBeenCalledWith('apk_abc', {
       testMode: true,
       logLevel: 'debug',
+      pluginVersion: Adfacten.version,
     });
     expect(Adfacten.isInitialized()).toBe(true);
     expect(console.warn).not.toHaveBeenCalled();
@@ -46,7 +47,14 @@ describe('Adfacten', () => {
   it('warns about a malformed app key but still forwards it', () => {
     Adfacten.initialize('plc_wrong');
     expect(console.warn).toHaveBeenCalled();
-    expect(mockNative!.initialize).toHaveBeenCalledWith('plc_wrong', {});
+    expect(mockNative!.initialize).toHaveBeenCalledWith('plc_wrong', {
+      pluginVersion: Adfacten.version,
+    });
+  });
+
+  it('reports the package version from package.json', () => {
+    const pkg = require('../../package.json') as { version: string };
+    expect(Adfacten.version).toBe(pkg.version);
   });
 
   it('sets and clears the user id', () => {

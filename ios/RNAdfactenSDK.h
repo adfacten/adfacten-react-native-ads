@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /** Error helpers shared by the module and the views. */
 @interface RNAdfactenErrors : NSObject
-/** JS error code (NO_FILL, REJECTED, ...) for an SDK error. */
+/** The SDK's stable error name (no_fill, rejected, ...), passed to JS as the error code. */
 + (NSString *)codeForError:(NSError *)error;
 + (nullable NSString *)serverCodeForError:(NSError *)error;
 /** An NSError whose userInfo carries serverCode and nativeCode for promise rejections. */

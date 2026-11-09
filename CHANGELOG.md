@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.0.1 - 2026-11-09
+
+- Built on the native Adfacten SDK 1.0.2: Android `com.adfacten:ads` 1.0.2, iOS AdfactenAds 1.0.2
+  (XCFramework checksum updated).
+- Banners retry by themselves after a failed load while they are on screen.
+- `autoRefresh` now works the same on both platforms: left on (the default), the placement's
+  interval applies; `false` turns refresh off even if the placement has one.
+- Showing a native ad again never counts a second impression.
+- New `AdfactenError.errorName`: the native SDK's stable error name (`no_fill`, `rejected`, ...),
+  the same on Android and iOS. `code` is derived from it; existing codes are unchanged.
+- The package reports itself to the SDK (`react_native` and the package version), sent with ad
+  requests. New `Adfacten.version`.
+
 ## 1.0.0 - 2026-11-09
 
 First release.

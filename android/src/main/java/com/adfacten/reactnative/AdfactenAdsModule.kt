@@ -33,7 +33,9 @@ class AdfactenAdsModule(reactContext: ReactApplicationContext) :
     val childDirected = config.optBoolean("childDirected")
     val logLevel = logLevelOf(config.optString("logLevel"))
     val userId = config.optString("userId")
+    val pluginVersion = config.optString("pluginVersion") ?: "unknown"
     UiThreadUtil.runOnUiThread {
+      Adfacten.setWrapper("react_native", pluginVersion)
       Adfacten.initialize(
         reactApplicationContext.applicationContext,
         appKey,
@@ -69,7 +71,7 @@ class AdfactenAdsModule(reactContext: ReactApplicationContext) :
         "interstitial" -> InterstitialAd.load(context, placementId, callback(adId, promise))
         "app_open" -> AppOpenAd.load(context, placementId, callback(adId, promise))
         "rewarded" -> RewardedAd.load(context, placementId, callback(adId, promise), customData)
-        else -> promise.reject("INVALID_REQUEST", "unknown ad format \"$format\"")
+        else -> promise.reject("invalid_request", "unknown ad format \"$format\"")
       }
     }
   }
@@ -107,12 +109,12 @@ class AdfactenAdsModule(reactContext: ReactApplicationContext) :
     UiThreadUtil.runOnUiThread {
       val ad = ads[adId]
       if (ad == null) {
-        emitShowFailure(adId, "NOT_READY", "the ad is not loaded or was already shown")
+        emitShowFailure(adId, "not_ready", "the ad is not loaded or was already shown")
         return@runOnUiThread
       }
       val activity = reactApplicationContext.currentActivity
       if (activity == null || activity.isFinishing) {
-        emitShowFailure(adId, "SHOW_FAILED", "no activity in the foreground")
+        emitShowFailure(adId, "show_failed", "no activity in the foreground")
         return@runOnUiThread
       }
       when (ad) {

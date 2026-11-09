@@ -32,14 +32,17 @@ export type AdfactenBannerProps = Omit<ViewProps, 'children' | 'style'> & {
   size?: BannerSize;
   /**
    * Refresh with the interval set on the placement (30-120 s of on-screen time). Default true.
-   * On iOS a refresh interval set on the placement always applies.
+   * `false` turns refresh off, even if the placement has an interval.
    */
   autoRefresh?: boolean;
   /** Margins, alignment and similar. The size always comes from `size`. */
   style?: StyleProp<ViewStyle>;
   /** A creative was loaded (also after each refresh). */
   onLoad?: () => void;
-  /** No banner could be loaded. Hide the slot, or keep it empty; the SDK retries on refresh. */
+  /**
+   * No banner could be loaded. The banner retries by itself while it is on screen (not after a
+   * rejection), so keep it mounted if you want the slot to fill later.
+   */
   onError?: (error: AdfactenError) => void;
   /** The banner was on screen and the impression was recorded. */
   onImpression?: () => void;

@@ -65,6 +65,8 @@
   if (userId.length > 0) {
     c.userId = userId;
   }
+  NSString *pluginVersion = config.pluginVersion();
+  [ADFAdfacten setWrapperName:@"react_native" version:pluginVersion.length > 0 ? pluginVersion : @"unknown"];
   [ADFAdfacten initializeWithAppKey:appKey config:c];
 }
 
@@ -105,7 +107,7 @@
       return;
     }
     if (strongSelf == nil) {
-      reject(@"INTERNAL_ERROR", @"the module was released", nil);
+      reject(@"internal_error", @"the module was released", nil);
       return;
     }
     ad.delegate = strongSelf;
@@ -134,7 +136,7 @@
                             customData:custom.length > 0 ? custom : nil
                             completion:^(ADFRewardedAd *ad, NSError *error) { done(ad, error); }];
   } else {
-    reject(@"INVALID_REQUEST", [NSString stringWithFormat:@"unknown ad format \"%@\"", format], nil);
+    reject(@"invalid_request", [NSString stringWithFormat:@"unknown ad format \"%@\"", format], nil);
   }
 }
 
@@ -143,7 +145,7 @@
   ADFFullScreenAd *ad = _ads[adId];
   if (ad == nil) {
     [self emit:adId type:@"failedToShow" extra:@{
-      @"errorCode" : @"NOT_READY",
+      @"errorCode" : @"not_ready",
       @"errorMessage" : @"the ad is not loaded or was already shown",
     }];
     return;
@@ -151,7 +153,7 @@
   UIViewController *presenter = RCTPresentedViewController();
   if (presenter == nil) {
     [self emit:adId type:@"failedToShow" extra:@{
-      @"errorCode" : @"SHOW_FAILED",
+      @"errorCode" : @"show_failed",
       @"errorMessage" : @"no view controller to present from",
     }];
     return;

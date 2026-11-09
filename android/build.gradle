@@ -1,7 +1,7 @@
 ext.AdfactenAds = [
   minSdkVersion: 24,
   compileSdkVersion: 36,
-  adfactenSdkVersion: "1.0.1"
+  adfactenSdkVersion: "1.0.2"
 ]
 
 ext.getExtOrDefault = { prop ->

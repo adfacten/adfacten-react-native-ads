@@ -1,6 +1,6 @@
 {
   "name": "@adfacten/react-native-ads",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Adfacten Ads for React Native: banner, interstitial, rewarded, native and app-open ads.",
   "main": "./lib/module/index.js",
   "types": "./lib/typescript/src/index.d.ts",

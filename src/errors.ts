@@ -1,6 +1,6 @@
 /**
- * Error codes shared by both platforms. The native SDKs use slightly different sets; they are
- * mapped to these names by the bridge.
+ * Error codes shared by both platforms: the native SDK's stable error name in upper case
+ * (`no_fill` is `NO_FILL`). `already_shown` and `not_ready` are both `NOT_READY`.
  */
 export type AdfactenErrorCode =
   /** `Adfacten.initialize` was not called, or the app key is malformed. */
@@ -69,6 +69,11 @@ const KNOWN_CODES: ReadonlySet<string> = new Set<AdfactenErrorCode>([
 
 export class AdfactenError extends Error {
   readonly code: AdfactenErrorCode;
+  /**
+   * The stable error name reported by the native SDK (`no_fill`, `network_error`, `rejected`,
+   * ...), the same on Android and iOS. Errors raised in JS use the lower-case code.
+   */
+  readonly errorName: string;
   /** The ad server's code for `REJECTED` errors, e.g. `bundle_mismatch`. */
   readonly serverCode?: AdfactenServerCode;
   /** The platform SDK's numeric error code, for bug reports. */
@@ -78,11 +83,13 @@ export class AdfactenError extends Error {
     code: AdfactenErrorCode,
     message: string,
     serverCode?: string,
-    nativeCode?: number
+    nativeCode?: number,
+    errorName?: string
   ) {
     super(message);
     this.name = 'AdfactenError';
     this.code = code;
+    this.errorName = errorName || code.toLowerCase();
     if (serverCode) this.serverCode = serverCode;
     if (typeof nativeCode === 'number') this.nativeCode = nativeCode;
   }
@@ -97,9 +104,13 @@ export function isAdfactenError(e: unknown): e is AdfactenError {
   return e instanceof AdfactenError;
 }
 
+/** Maps a native error name (`no_fill`) or a code (`NO_FILL`) to an AdfactenErrorCode. */
 export function normalizeCode(code: unknown): AdfactenErrorCode {
-  return typeof code === 'string' && KNOWN_CODES.has(code)
-    ? (code as AdfactenErrorCode)
+  if (typeof code !== 'string') return 'INTERNAL_ERROR';
+  const upper = code.toUpperCase();
+  if (upper === 'ALREADY_SHOWN') return 'NOT_READY';
+  return KNOWN_CODES.has(upper)
+    ? (upper as AdfactenErrorCode)
     : 'INTERNAL_ERROR';
 }
 
@@ -116,7 +127,8 @@ export function errorFromEvent(e: ErrorFields): AdfactenError {
     normalizeCode(e.code),
     typeof e.message === 'string' && e.message ? e.message : 'unknown error',
     typeof e.serverCode === 'string' && e.serverCode ? e.serverCode : undefined,
-    typeof e.nativeCode === 'number' ? e.nativeCode : undefined
+    typeof e.nativeCode === 'number' ? e.nativeCode : undefined,
+    typeof e.code === 'string' && e.code ? e.code.toLowerCase() : undefined
   );
 }
 

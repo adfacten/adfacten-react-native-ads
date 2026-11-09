@@ -14,6 +14,43 @@ describe('errors', () => {
     expect(normalizeCode(undefined)).toBe('INTERNAL_ERROR');
   });
 
+  it('maps every native error name to a code', () => {
+    const names: Record<string, string> = {
+      internal_error: 'INTERNAL_ERROR',
+      not_initialized: 'NOT_INITIALIZED',
+      invalid_request: 'INVALID_REQUEST',
+      network_error: 'NETWORK_ERROR',
+      no_fill: 'NO_FILL',
+      server_error: 'SERVER_ERROR',
+      invalid_response: 'INVALID_RESPONSE',
+      rejected: 'REJECTED',
+      ad_expired: 'AD_EXPIRED',
+      already_shown: 'NOT_READY',
+      not_ready: 'NOT_READY',
+      show_failed: 'SHOW_FAILED',
+      video_not_supported: 'VIDEO_NOT_SUPPORTED',
+      load_in_progress: 'LOAD_IN_PROGRESS',
+      child_directed: 'CHILD_DIRECTED',
+      creative_failed: 'CREATIVE_FAILED',
+    };
+    for (const [name, code] of Object.entries(names)) {
+      expect(normalizeCode(name)).toBe(code);
+      const e = errorFromEvent({ code: name, message: 'm' });
+      expect(e.code).toBe(code);
+      expect(e.errorName).toBe(name);
+    }
+  });
+
+  it('keeps an unknown native name but reports INTERNAL_ERROR', () => {
+    const e = errorFromEvent({ code: 'something_new', message: 'm' });
+    expect(e.code).toBe('INTERNAL_ERROR');
+    expect(e.errorName).toBe('something_new');
+  });
+
+  it('gives errors raised in JS the lower-case name', () => {
+    expect(new AdfactenError('NOT_READY', 'x').errorName).toBe('not_ready');
+  });
+
   it('builds errors from view events, treating empty strings as missing', () => {
     const e = errorFromEvent({
       code: 'NO_FILL',

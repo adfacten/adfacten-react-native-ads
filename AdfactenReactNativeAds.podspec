@@ -7,15 +7,15 @@ require "tmpdir"
 package = JSON.parse(File.read(File.join(__dir__, "package.json")))
 
 # Version of the native Adfacten iOS SDK this package is built against.
-adfacten_ios_version = "1.0.0"
-adfacten_ios_sha256 = "6ab9883dc8d92597f2f0c7391c4b2434c15950548e7e465e16367539290b883f"
+adfacten_ios_version = "1.0.2"
+adfacten_ios_sha256 = "a7ce159e07b4146aa2925d9c7be76dfcda2dc4a80bd9ec4ffcef24531bc9ce7d"
 adfacten_ios_url = "https://cdn.adfacten.com/ios/AdfactenAds-#{adfacten_ios_version}.xcframework.zip"
 
 # How the native SDK is linked:
 #   (default)                   download the prebuilt XCFramework from the Adfacten CDN, check its
 #                               SHA-256 and vendor it in this pod. No Podfile changes needed.
 #   ADFACTEN_IOS_SDK=pod        depend on the AdfactenAds pod instead. Add it to your Podfile:
-#                               pod 'AdfactenAds', :git => 'https://github.com/adfacten/adfacten-ios-sdk.git', :tag => '1.0.0'
+#                               pod 'AdfactenAds', :git => 'https://github.com/adfacten/adfacten-ios-sdk.git', :tag => '1.0.2'
 #   ADFACTEN_IOS_FRAMEWORK=path use an XCFramework you downloaded yourself (offline builds).
 use_pod = ENV["ADFACTEN_IOS_SDK"] == "pod"
 

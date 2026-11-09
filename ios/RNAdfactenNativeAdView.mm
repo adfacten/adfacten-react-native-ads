@@ -144,7 +144,7 @@ static std::string RNAdfString(NSString *_Nullable s)
     return;
   }
   if (_ad == nil) return;
-  // Rebinding would start a new impression, so only a template switch rebuilds the view;
+  // Only a template switch rebuilds the view (a rebind never counts a second impression);
   // colors and sizes are applied in place.
   if (![_template isEqualToString:_builtTemplate]) {
     [self bind:_ad];

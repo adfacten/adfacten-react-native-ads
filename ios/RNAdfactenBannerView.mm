@@ -17,6 +17,8 @@ using namespace facebook::react;
   NSString *_placementId;
   NSString *_size;
   BOOL _autoRefresh;
+  // Whether refresh was set on the current banner. Until then the placement's setting applies.
+  BOOL _refreshSet;
 }
 
 + (ComponentDescriptorProvider)componentDescriptorProvider
@@ -72,16 +74,16 @@ using namespace facebook::react;
   }
   NSString *key = [NSString stringWithFormat:@"%@|%@", _placementId, _size];
   if (_banner && [key isEqualToString:_loadedKey]) {
-    _banner.refreshInterval = _autoRefresh ? 60 : 0;
+    [self applyRefresh];
     return;
   }
   [self destroyBanner];
   _loadedKey = key;
   ADFBannerView *banner = [[ADFBannerView alloc] initWithPlacementId:_placementId size:[self adSize]];
   banner.delegate = self;
-  banner.refreshInterval = _autoRefresh ? 60 : 0;
   [self addSubview:banner];
   _banner = banner;
+  [self applyRefresh];
   [self setNeedsLayout];
   [banner load];
 }
@@ -94,6 +96,19 @@ using namespace facebook::react;
   [_banner removeFromSuperview];
   _banner = nil;
   _loadedKey = nil;
+  _refreshSet = NO;
+}
+
+// autoRefresh={false} turns refresh off. Left on, the placement's interval applies; only a switch
+// back from off sets it explicitly (60 s).
+- (void)applyRefresh
+{
+  if (!_autoRefresh) {
+    _banner.refreshInterval = 0;
+    _refreshSet = YES;
+  } else if (_refreshSet) {
+    _banner.refreshInterval = 60;
+  }
 }
 
 - (ADFBannerSize)adSize

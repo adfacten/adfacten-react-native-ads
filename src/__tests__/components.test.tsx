@@ -81,7 +81,7 @@ describe('AdfactenBanner', () => {
       view.props.onAdClicked({ nativeEvent: {} });
       view.props.onAdFailedToLoad({
         nativeEvent: {
-          code: 'NO_FILL',
+          code: 'no_fill',
           message: 'no ad',
           serverCode: '',
           nativeCode: 4,
@@ -94,6 +94,7 @@ describe('AdfactenBanner', () => {
     const err = onError.mock.calls[0][0];
     expect(err).toBeInstanceOf(AdfactenError);
     expect(err.code).toBe('NO_FILL');
+    expect(err.errorName).toBe('no_fill');
     expect(err.serverCode).toBeUndefined();
   });
 
@@ -199,7 +200,7 @@ describe('AdfactenNativeAd', () => {
     act(() =>
       host(r, 'RNAdfactenNativeAdView').props.onAdFailedToLoad({
         nativeEvent: {
-          code: 'NETWORK_ERROR',
+          code: 'network_error',
           message: 'offline',
           serverCode: '',
           nativeCode: 3,

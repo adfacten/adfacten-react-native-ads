@@ -6,6 +6,8 @@ export type NativeConfig = {
   logLevel?: string;
   childDirected?: boolean;
   userId?: string;
+  /** Version of this package, reported to the SDK with the wrapper name. */
+  pluginVersion?: string;
 };
 
 export type NativeLoadOptions = {

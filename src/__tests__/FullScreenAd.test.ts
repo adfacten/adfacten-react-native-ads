@@ -52,7 +52,7 @@ describe('loading', () => {
     mockNative.loadFullScreenAd.mockImplementationOnce(() =>
       Promise.reject(
         Object.assign(new Error('placement belongs to another app'), {
-          code: 'REJECTED',
+          code: 'rejected',
           userInfo: { serverCode: 'placement_mismatch', nativeCode: 7 },
         })
       )
@@ -60,6 +60,7 @@ describe('loading', () => {
     await expect(InterstitialAd.load('plc_x')).rejects.toMatchObject({
       name: 'AdfactenError',
       code: 'REJECTED',
+      errorName: 'rejected',
       serverCode: 'placement_mismatch',
     });
   });
@@ -67,6 +68,7 @@ describe('loading', () => {
   it('refuses an empty placement id without calling native', async () => {
     await expect(InterstitialAd.load('  ')).rejects.toMatchObject({
       code: 'INVALID_REQUEST',
+      errorName: 'invalid_request',
     });
     expect(mockNative.loadFullScreenAd).not.toHaveBeenCalled();
   });
@@ -138,12 +140,13 @@ describe('showing', () => {
     mockNative.emit({
       adId: id,
       type: 'failedToShow',
-      errorCode: 'SHOW_FAILED',
+      errorCode: 'show_failed',
       errorMessage: 'another ad is on screen',
       nativeCode: 11,
     });
     await expect(attempt).rejects.toMatchObject({
       code: 'SHOW_FAILED',
+      errorName: 'show_failed',
       nativeCode: 11,
     });
     expect(onFailed.mock.calls[0]![0]).toBeInstanceOf(AdfactenError);
@@ -166,7 +169,7 @@ describe('showing', () => {
     mockNative.emit({
       adId: id,
       type: 'failedToShow',
-      errorCode: 'CREATIVE_FAILED',
+      errorCode: 'creative_failed',
       errorMessage: 'video',
     });
     expect(order).toEqual(['failed:CREATIVE_FAILED', 'closed']);

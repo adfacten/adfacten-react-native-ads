@@ -19,6 +19,8 @@ class RNAdfactenBannerView(context: Context) : FrameLayout(context) {
 
   private var banner: AdfactenBannerView? = null
   private var loadedKey: String? = null
+  // Whether refresh was set on the current banner. Until then the placement's setting applies.
+  private var refreshSet = false
 
   fun commit() {
     val key = "$placementId|$size"
@@ -26,14 +28,14 @@ class RNAdfactenBannerView(context: Context) : FrameLayout(context) {
       destroyBanner()
       return
     }
-    banner?.autoRefresh = autoRefresh
+    banner?.let { applyRefresh(it) }
     if (key == loadedKey) return
     destroyBanner()
     loadedKey = key
     val view = AdfactenBannerView(context).also {
       it.placementId = placementId
       it.adSize = adSizeOf(size)
-      it.autoRefresh = autoRefresh
+      applyRefresh(it)
       it.listener = object : BannerAdListener {
         override fun onLoaded() = dispatchAdEvent("topAdLoaded")
         override fun onFailed(error: AdError) = dispatchAdEvent("topAdFailedToLoad", AdErrors.viewEvent(error))
@@ -54,6 +56,15 @@ class RNAdfactenBannerView(context: Context) : FrameLayout(context) {
     }
     banner = null
     loadedKey = null
+    refreshSet = false
+  }
+
+  /** autoRefresh=false turns refresh off. Left on, the placement's interval applies. */
+  private fun applyRefresh(view: AdfactenBannerView) {
+    if (!autoRefresh || refreshSet) {
+      view.autoRefresh = autoRefresh
+      refreshSet = true
+    }
   }
 
   // React Native lays out its own views only; views added natively (the banner and its
