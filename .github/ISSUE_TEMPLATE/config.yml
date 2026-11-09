@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Integration help
+    url: https://developers.adfacten.com/mobile-sdk-en
+    about: Setup guides for the Adfacten mobile SDKs. For account or panel questions, write to destek@adfacten.com.

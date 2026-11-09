@@ -1,0 +1,73 @@
+ext.AdfactenAds = [
+  minSdkVersion: 24,
+  compileSdkVersion: 36,
+  adfactenSdkVersion: "1.0.1"
+]
+
+ext.getExtOrDefault = { prop ->
+  if (rootProject.ext.has(prop)) {
+    return rootProject.ext.get(prop)
+  }
+  return AdfactenAds[prop]
+}
+
+// Gradle property (gradle.properties of the app) with a default.
+def adfactenFlag = { String name, boolean fallback ->
+  def value = rootProject.findProperty(name)
+  return value == null ? fallback : value.toString().toBoolean()
+}
+
+apply plugin: "com.android.library"
+
+if (project.extensions.findByName("kotlin") == null) {
+  apply plugin: "kotlin-android"
+}
+
+apply plugin: "com.facebook.react"
+
+// The Adfacten SDK is published on Adfacten's own Maven repository. Add it to every project so
+// the app resolves it without changes to its build files. Apps that lock repositories in
+// settings.gradle (RepositoriesMode.FAIL_ON_PROJECT_REPOS) add the same block there instead.
+def adfactenMaven = "https://cdn.adfacten.com/maven/"
+rootProject.allprojects { p ->
+  p.repositories {
+    if (!p.repositories.findByName("AdfactenMaven")) {
+      maven {
+        name = "AdfactenMaven"
+        url = adfactenMaven
+        content { includeGroup "com.adfacten" }
+      }
+    }
+  }
+}
+
+android {
+  namespace "com.adfacten.reactnative"
+
+  compileSdkVersion getExtOrDefault("compileSdkVersion")
+
+  defaultConfig {
+    minSdkVersion getExtOrDefault("minSdkVersion")
+  }
+
+  buildFeatures {
+    buildConfig false
+  }
+}
+
+def sdkVersion = getExtOrDefault("adfactenSdkVersion")
+
+dependencies {
+  implementation "com.facebook.react:react-android"
+
+  api "com.adfacten:ads:${sdkVersion}"
+  // VAST video for interstitial and rewarded ads (Media3). Opt out with adfactenVideo=false.
+  if (adfactenFlag("adfactenVideo", true)) {
+    implementation "com.adfacten:ads-video:${sdkVersion}"
+  }
+  // Google advertising ID and App Set ID; adds the AD_ID permission. Opt out with
+  // adfactenAdvertisingId=false (for example in child-directed apps).
+  if (adfactenFlag("adfactenAdvertisingId", true)) {
+    implementation "com.adfacten:ads-gaid:${sdkVersion}"
+  }
+}

@@ -1,0 +1,165 @@
+{
+  "name": "@adfacten/react-native-ads",
+  "version": "1.0.0",
+  "description": "Adfacten Ads for React Native: banner, interstitial, rewarded, native and app-open ads.",
+  "main": "./lib/module/index.js",
+  "types": "./lib/typescript/src/index.d.ts",
+  "exports": {
+    ".": {
+      "adfacten-react-native-ads-source": "./src/index.ts",
+      "types": "./lib/typescript/src/index.d.ts",
+      "default": "./lib/module/index.js"
+    },
+    "./app.plugin.js": "./app.plugin.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "src",
+    "lib",
+    "android",
+    "ios",
+    "plugin",
+    "app.plugin.js",
+    "*.podspec",
+    "react-native.config.js",
+    "!ios/build",
+    "!ios/Frameworks",
+    "!android/build",
+    "!android/gradle",
+    "!android/gradlew",
+    "!android/gradlew.bat",
+    "!android/local.properties",
+    "!**/__tests__",
+    "!**/__fixtures__",
+    "!**/__mocks__",
+    "!**/.*"
+  ],
+  "scripts": {
+    "example": "yarn workspace @adfacten/react-native-ads-example",
+    "test": "jest",
+    "typecheck": "tsc",
+    "lint": "eslint \"**/*.{js,ts,tsx}\"",
+    "clean": "del-cli android/build example/android/build example/android/app/build example/ios/build lib",
+    "prepare": "bob build"
+  },
+  "keywords": [
+    "react-native",
+    "ads",
+    "advertising",
+    "adfacten",
+    "banner",
+    "interstitial",
+    "rewarded",
+    "native-ads",
+    "app-open",
+    "expo",
+    "ios",
+    "android"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adfacten/adfacten-react-native-ads.git"
+  },
+  "author": "Adfacten <destek@adfacten.com> (https://adfacten.com)",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/adfacten/adfacten-react-native-ads/issues"
+  },
+  "homepage": "https://developers.adfacten.com/mobile-sdk-en",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
+  "devDependencies": {
+    "@eslint/compat": "^2.1.1",
+    "@eslint/eslintrc": "^3.3.7",
+    "@eslint/js": "^9.39.5",
+    "@expo/config-plugins": "^58.0.12",
+    "@react-native/babel-preset": "0.88.0",
+    "@react-native/eslint-config": "0.88.0",
+    "@react-native/jest-preset": "0.88.0",
+    "@types/jest": "^30.0.0",
+    "@types/react": "^19.2.0",
+    "@types/react-test-renderer": "^19.1.0",
+    "del-cli": "^8.0.1",
+    "eslint": "^9.39.5",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-ft-flow": "^3.0.11",
+    "eslint-plugin-prettier": "^5.5.7",
+    "jest": "^30.2.0",
+    "prettier": "^3.9.10",
+    "react": "19.3.0",
+    "react-native": "0.88.0",
+    "react-native-builder-bob": "^0.44.1",
+    "react-test-renderer": "19.3.0",
+    "turbo": "^2.11.10",
+    "typescript": "^6.0.3"
+  },
+  "peerDependencies": {
+    "react": "*",
+    "react-native": ">=0.80"
+  },
+  "workspaces": [
+    "example"
+  ],
+  "packageManager": "yarn@4.18.1",
+  "react-native-builder-bob": {
+    "source": "src",
+    "output": "lib",
+    "targets": [
+      [
+        "module",
+        {
+          "esm": true
+        }
+      ],
+      [
+        "typescript",
+        {
+          "project": "tsconfig.build.json"
+        }
+      ]
+    ]
+  },
+  "codegenConfig": {
+    "name": "RNAdfactenAdsSpec",
+    "type": "all",
+    "jsSrcsDir": "src/specs",
+    "android": {
+      "javaPackageName": "com.adfacten.reactnative"
+    },
+    "ios": {
+      "components": {
+        "RNAdfactenBannerView": {
+          "className": "RNAdfactenBannerView"
+        },
+        "RNAdfactenNativeAdView": {
+          "className": "RNAdfactenNativeAdView"
+        }
+      },
+      "modulesProvider": {
+        "RNAdfactenAds": "RNAdfactenAds"
+      }
+    }
+  },
+  "prettier": {
+    "quoteProps": "consistent",
+    "singleQuote": true,
+    "tabWidth": 2,
+    "trailingComma": "es5",
+    "useTabs": false
+  },
+  "jest": {
+    "preset": "@react-native/jest-preset",
+    "modulePathIgnorePatterns": [
+      "<rootDir>/example/node_modules",
+      "<rootDir>/lib/"
+    ],
+    "moduleNameMapper": {
+      "^expo/config-plugins$": "@expo/config-plugins"
+    },
+    "testMatch": [
+      "<rootDir>/src/**/__tests__/**/*.test.[jt]s?(x)",
+      "<rootDir>/plugin/**/__tests__/**/*.test.js"
+    ]
+  }
+}

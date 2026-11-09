@@ -1,0 +1,49 @@
+name: Bug report
+description: Report a reproducible bug in @adfacten/react-native-ads.
+labels: [bug]
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: What happened
+      description: What you expected, what happened instead, and any error (code, serverCode, message).
+    validations:
+      required: true
+  - type: input
+    id: library-version
+    attributes:
+      label: Library version
+      placeholder: "1.0.0"
+    validations:
+      required: true
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      multiple: true
+      options:
+        - Android
+        - iOS
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Output of `npx react-native info` (or `npx expo-env-info` for Expo apps).
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Code or steps that show the problem. The example app in this repository is a good starting point.
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Native logs
+      description: Initialize with `logLevel: 'debug'` and paste Logcat (tag `Adfacten`) or Console (subsystem `com.adfacten.ads`) output. Remove app keys you don't want to share.
+      render: shell
